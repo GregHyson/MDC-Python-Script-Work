@@ -1,1 +1,26 @@
+# Import the libraries you need to use
+import pythonaddins
+import arcpy
+import os
 
+# Parameters are to allow for passing in 
+# a List containing all the layers the user wants to change, required
+# a folder location, where the reading occurs from, required
+layerList = arcpy.GetParameter(0)
+folderLocation = arcpy.GetParameter(1)
+    
+# Set the workspace to the saving location of the presaved files
+arcpy.env.workspace = folderLocation
+    
+# Loop as long as the List of layers still has values in it
+while len(layerList) > 0:
+    # Remove the last value of the List and set it to a variable
+    currentLayer = layerList.pop()
+    # Use that variable to compare against the name of all of the specifically chosen example 
+    # maps saved layer files.
+    files = arcpy.ListFiles("*.lyr")
+    for file in files:
+        desc = arcpy.Describe(file)
+        if desc.baseName == currentLayer.name:
+            arcpy.ApplySymbologyFromLayer_management(currentLayer, file)
+            break
