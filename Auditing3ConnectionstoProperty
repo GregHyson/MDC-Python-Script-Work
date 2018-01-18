@@ -1,0 +1,33 @@
+import arcpy
+
+# No parameters as this will always be taking from the same files
+
+# Take from the joins layer,
+map = arcpy.mapping.MapDocument('G:\ArcGIS\Desktop103\Packages\AMIS Services (Joins).lyr')
+# the Service Lines for all three services.
+serviceLines = arcpy.mapping.ListLayers(map,"*Service Line Pipe")[0]
+# Then take the Property Layer containing the property polygons.
+propertyLayer = 'G:\ArcGIS\Desktop103\Packages\Property.lyr'
+# Followed by the Locality Layer containing the area we want the script to run in.
+blenheimLocality = 'T:\Services\3Waters ToolBox\Blenheim_Locality.shp'
+
+localGeoObj = arcpy.CopyFeatures_management(blenheimLocality, arcpy.Geometry())
+
+# For every Property Polygon in the property layer,
+for propertyPolygon in propertyLayer:
+    propertyGeoObj = arcpy.CopyFeatures_management(propertyPolygon, arcpy.Geometry())
+    
+    # We first ask if it is inside the Blenheim Locality polygon contained within the administrative layer
+    if propertyGeoObj.within(localGeoObj):
+    # If it is
+        # We then ask if it has an intersection with each of the three services
+        for layer in serviceLines :
+            if layer.touches(propertyGeoObj):
+                # And then we change the symbology of the Property polygon to a preset colour
+                arcpy.ApplySymbologyFromLayer_management(propertyPolygon, 'S:\Ghy\Development\Symology Script Saving Folder\Property Symbologies for Connected Service Lines Audit\Property Bad.lyr')
+            else:
+                arcpy.ApplySymbologyFromLayer_management(propertyPolygon, 'S:\Ghy\Development\Symology Script Saving Folder\Property Symbologies for Connected Service Lines Audit\Property Good.lyr')
+                    
+
+
+
