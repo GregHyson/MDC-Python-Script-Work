@@ -23,10 +23,12 @@ for propertyPolygon in propertyLayer:
         # We then ask if it has an intersection with each of the three services
         for layer in serviceLines :
             if layer.touches(propertyGeoObj):
-                # And then we change the symbology of the Property polygon to a preset colour
-                arcpy.ApplySymbologyFromLayer_management(propertyPolygon, 'S:\Ghy\Development\Symology Script Saving Folder\Property Symbologies for Connected Service Lines Audit\Property Bad.lyr')
+            
+                # Then we need to add it to the feature class to be exported to a shpfile TO BE DONE (Dont forget to remove the layer files from your S Drive)                0               
+                
+                
             else:
-                arcpy.ApplySymbologyFromLayer_management(propertyPolygon, 'S:\Ghy\Development\Symology Script Saving Folder\Property Symbologies for Connected Service Lines Audit\Property Good.lyr')
+
                     
 
 
