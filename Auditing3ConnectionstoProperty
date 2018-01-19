@@ -13,22 +13,28 @@ blenheimLocality = 'T:\Services\3Waters ToolBox\Blenheim_Locality.shp'
 
 localGeoObj = arcpy.CopyFeatures_management(blenheimLocality, arcpy.Geometry())
 
+# List of property numbers to be sent into the shapefile
+propNoList = [0]
+
 # For every Property Polygon in the property layer,
 for propertyPolygon in propertyLayer:
     propertyGeoObj = arcpy.CopyFeatures_management(propertyPolygon, arcpy.Geometry())
-    
+        
     # We first ask if it is inside the Blenheim Locality polygon contained within the administrative layer
     if propertyGeoObj.within(localGeoObj):
     # If it is
         # We then ask if it has an intersection with each of the three services
         for layer in serviceLines :
-            if layer.touches(propertyGeoObj):
-            
-                # Then we need to add it to the feature class to be exported to a shpfile TO BE DONE (Dont forget to remove the layer files from your S Drive)                0               
-                
-                
+            fields = arcpy.Describe(layer).fields
+            rows = arcpy.SearchCursor
+            fVal = ""
+            for f in fields:
+                    if f.Name == "property_no" :
+                        fVal = f.getValue(f)
+            if layer.touches(propertyGeoObj) :
+                # Then we need to add it to the feature class to be exported to a shpfile TO BE DONE               
+                propNoList.append[layer.]
             else:
-
                     
 
 
