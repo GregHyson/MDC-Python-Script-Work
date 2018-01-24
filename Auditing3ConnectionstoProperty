@@ -25,7 +25,7 @@ blenheimLocality = 'T:\Services\3Waters ToolBox\Blenheim_Locality.shp'
 localGeoObj = arcpy.CopyFeatures_management(blenheimLocality, arcpy.Geometry())
 
 # Set up variables for property number listing
-propNoList = [0]
+propPointDataArray = [0]
 field = "property_no"
 
 for propertyPolygon in propertyLayer:
@@ -41,7 +41,5 @@ for propertyPolygon in propertyLayer:
                 break
         # Add the property polygons without all three connections to the list of polygons to be added to a shapefile
         if count != 3:
-            propNoList.append(propertyPolygon)
-
-
-
+            propPointDataArray.append()# The XY data and data type for each point in the property polygon
+            # http://pro.arcgis.com/en/pro-app/arcpy/get-started/writing-geometries.htm
