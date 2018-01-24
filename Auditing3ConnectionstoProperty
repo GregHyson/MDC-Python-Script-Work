@@ -1,50 +1,47 @@
 import arcpy
-# No parameters as this will always be taking from the same files
-
 # Find and set the filepeths to the three service line layers
 wSL = 'G:\ArcGIS\Desktop103\DataConnections\GISTM.sde\gistm.GIS.AMISWaterServiceLinePipe'
 wwSL = 'G:\ArcGIS\Desktop103\DataConnections\GISTM.sde\gistm.GIS.AMISWasteWaterServiceLinePipe'
 swSL = 'G:\ArcGIS\Desktop103\DataConnections\GISTM.sde\gistm.GIS.AMISStormWaterServiceLinePipe'
-
-# Set up a searchcursor within that layer that will search through
-# all the locality fields and return the asset number if the locality is equal to blenheim
-serviceLinesAssNo = []
-with arcpy.da.SearchCursor(wSL,['Asset ID', 'Locality'], where_clause=blah) as cursor:
+# Use the filepaths to open cursors to move through the layers accessing the Asset Number
+wServiceLinesAssNo = []
+wwServiceLinesAssNo = []
+swServiceLinesAssNo = []
+with arcpy.da.SearchCursor(wSL,['Asset ID', 'Locality'], where_clause = Locality = 'BLENHEIM') as cursor:
     for row in cursor:
-        serviceLinesAssNo.append()
+        wServiceLinesAssNo.append("'{0}',".format(row.getValue(0)))
+with arcpy.da.SearchCursor(wwSL,['Asset ID', 'Locality'], where_clause = Locality = 'BLENHEIM') as cursor:
+    for row in cursor:
+        wwServiceLinesAssNo.append("'{0}',".format(row.getValue(0)))
+with arcpy.da.SearchCursor(swSL,['Asset ID', 'Locality'], where_clause = Locality = 'BLENHEIM') as cursor:
+    for row in cursor:
+        swServiceLinesAssNo.append("'{0}',".format(row.getValue(0)))
 
-# Take the Property Layer containing the property polygons.
+# Set up the file paths for the specific layers we need
 propertyLayer = 'G:\ArcGIS\Desktop103\Packages\Property.lyr'
-# Followed by the Locality Layer containing the area we want the script to run in.
 blenheimLocality = 'T:\Services\3Waters ToolBox\Blenheim_Locality.shp'
 
-# Turn the blenheim locality polygon into a geometry object
+# Turn the Blenheim Locality polygon into a geometry object
 localGeoObj = arcpy.CopyFeatures_management(blenheimLocality, arcpy.Geometry())
 
-# List of property numbers to be sent into the shapefile
+# Set up variables for property number listing
 propNoList = [0]
-# Name of the field we will use to list which polygons to load into the shp file
 field = "property_no"
-        
-# For every Property Polygon in the property layer,
+
 for propertyPolygon in propertyLayer:
-    # Transform it into a geometry object
+    # Transform each layer into a geometry object
     propertyGeoObj = arcpy.CopyFeatures_management(propertyPolygon, arcpy.Geometry())
         
-    # Ask if the Blenheim Locality geometry object is contained within the locality geometry object
     if propertyGeoObj.within(localGeoObj):
-    # If it is
-        # We then ask if it has an intersection with each of the three services
-        # Initialise the service line count for each of the property polygons individually.
         count = 0
         for layer in serviceLines :
             if layer.touches(propertyGeoObj) or layer.crosses(propertyGeoObj):
-                # Each time it connects with a service line, we increment count.
+                # Each time a layer connects with the property polygon we break out of the layer loop and increment count
                 count += 1
-        # if after the loop is finished, count does not equal 3 then we add the property polygon to the list of polygons to be added to a shapefile
+                break
+        # Add the property polygons without all three connections to the list of polygons to be added to a shapefile
         if count != 3:
-            
-  
+            propNoList.append(propertyPolygon)
 
 
 
