@@ -1,41 +1,47 @@
+# PART 1
+
 import arcpy
 
-# No parameters as this will always be taking from the same files
+# Use the Make Feature Layer tool to make the Input Feature Layer
+arcpy.env.workspace = 'G:\ArcGIS\Desktop103\Packages\Administrative.lyr'
+arcpy.MakeFeatureLayer_management('Locality', 'S:\Ghy\Development\Temp_Script_Data_Saving_Location\temp_layer',"[LOCALITY] = 'Blenheim'")
+arcpy.SaveToLayerFile_management('S:\Ghy\Development\Temp_Script_Data_Saving_Location\temp_layer', 'S:\Ghy\Development\Temp_Script_Data_Saving_Location\Blenheim Locality.lyr')
 
-# Take from the joins layer,
-map = arcpy.mapping.MapDocument('G:\ArcGIS\Desktop103\Packages\AMIS Services (Joins).lyr')
-# the Service Lines for all three services.
-serviceLines = arcpy.mapping.ListLayers(map,"*Service Line Pipe")[0]
-# Then take the Property Layer containing the property polygons.
-propertyLayer = 'G:\ArcGIS\Desktop103\Packages\Property.lyr'
-# Followed by the Locality Layer containing the area we want the script to run in.
-blenheimLocality = 'T:\Services\3Waters ToolBox\Blenheim_Locality.shp'
+# PART 2
 
-localGeoObj = arcpy.CopyFeatures_management(blenheimLocality, arcpy.Geometry())
+import arcpy
 
-# List of property numbers to be sent into the shapefile
-propNoList = [0]
+# TO BE GONE THROUGH WITH GRANT CROSWELL CONCERNIG SAVING AND RELOADING THE LAYER FIELS APPROPRIATELY
 
-# For every Property Polygon in the property layer,
-for propertyPolygon in propertyLayer:
-    propertyGeoObj = arcpy.CopyFeatures_management(propertyPolygon, arcpy.Geometry())
+# Use the Select Layer by Location tool to select property polygons wihtin the Blenheim Locality
+arcpy.MakeFeatureLayer_management('G:\ArcGIS\Desktop103\Packages\Property.lyr', 'property_lyr')
+arcpy.SelectLayerByLocation_management('property_lyr', 'within', 'S:\Ghy\Development\Temp_Script_Data_Saving_Location\Blenheim Locality.lyr')
+# Save the selected features as a layer file to be used at a later time
+arcpy.SaveToLayerFile_management('property_lyr', 'S:\Ghy\Development\Temp_Script_Data_Saving_Location\Properties in Blenheim')
+
+# Repeat this process but for the Blenheim locality Service Line Pipes instead
+#arcpy.MakeFeatureLayer_management('S:\Ghy\Development\Layer Files\Water Service Line Pipe.lyr', 'water_service_lines', "LOCALITY = 'Blenheim'")
+#arcpy.SelectLayerByLocation_management('water_service_lines', 'within', 'S:\Ghy\Development\Temp_Script_Data_Saving_Location\Blenheim Locality.lyr')
+#arcpy.SaveToLayerFile_management('water_service_lines', 'S:\Ghy\Development\Temp_Script_Data_Saving_Location\WSL Blenheim')
+
+#arcpy.MakeFeatureLayer_management('S:\Ghy\Development\Layer Files\Stormwater Service Line Pipe.lyr', 'stormwater_service_lines', "LOCALITY = 'Blenheim'")
+#arcpy.SelectLayerByLocation_management('stormwater_service_lines', 'within', 'S:\Ghy\Development\Temp_Script_Data_Saving_Location\Blenheim Locality.lyr')
+#arcpy.SaveToLayerFile_management('stormwater_service_lines', 'S:\Ghy\Development\Temp_Script_Data_Saving_Location\SWSL Blenheim')
+
+#arcpy.MakeFeatureLayer_management('S:\Ghy\Development\Layer Files\Wastewater Service Line Pipe.lyr', 'wastewater_service_lines', "LOCALITY = 'Blenheim'")
+#arcpy.SelectLayerByLocation_management('wastewater_service_lines', 'within', 'S:\Ghy\Development\Temp_Script_Data_Saving_Location\Blenheim Locality.lyr')
+#arcpy.SaveToLayerFile_management('wastewater_service_lines', 'S:\Ghy\Development\Temp_Script_Data_Saving_Location\WWSL Blenheim')
+
+# PART 3
+
+import arcpy
+arcpy.MakeFeatureLayer_management('S:\Ghy\Development\Layer Files\Water Service Line Pipe.lyr', 'input_layer') 
+arcpy.MakeFeatureLayer_management('S:\Ghy\Development\Temp_Script_Data_Saving_Location\Properties in Blenheim.lyr','selecting_layer')
+
+rows = arcpy.SearchCursor('selecting_layer')
+for row in rows:
+    arcpy.management.SelectLayerByLocation('input_layer', 'intersect', 'selecting_layer', "", "REMOVE_FROM_SELECTION")
+    
+arcpy.SaveToLayerFile_management('selecting_layer', 'S:\Ghy\Development\Temp_Script_Data_Saving_Location\Not connected properties in Blenheim')    
         
-    # We first ask if it is inside the Blenheim Locality polygon contained within the administrative layer
-    if propertyGeoObj.within(localGeoObj):
-    # If it is
-        # We then ask if it has an intersection with each of the three services
-        for layer in serviceLines :
-            fields = arcpy.Describe(layer).fields
-            rows = arcpy.SearchCursor
-            fVal = ""
-            for f in fields:
-                    if f.Name == "property_no" :
-                        fVal = f.getValue(f)
-            if layer.touches(propertyGeoObj) :
-                # Then we need to add it to the feature class to be exported to a shpfile TO BE DONE               
-                propNoList.append[layer.]
-            else:
-                    
-
-
 
