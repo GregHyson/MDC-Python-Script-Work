@@ -1,0 +1,19 @@
+# Import the libraries you need to use
+import pythonaddins
+import arcpy
+
+# No parameters as it will reset the entire project to defaults
+mxd = arcpy.mapping.MapDocument("CURRENT")
+df = arcpy.mapping.ListDataFrames(mxd,"")[0]
+# Set the workspace to the saving location of the presaved files
+arcpy.env.workspace = "G:\ArcGIS\Desktop105\Packages"
+
+files = arcpy.ListFiles("AMIS Services*.lyr")
+layers = arcpy.mapping.ListLayers(mxd,"",df)
+for file in files:
+    desc = arcpy.Describe(file)
+    while len(layers) > 0:
+        currentLayer = layers.pop()
+        if desc.baseName == currentLayer.name:
+            arcpy.ApplySymbologyFromLayer_management(currentLayer, file)    
+            break
