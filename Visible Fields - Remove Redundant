@@ -1,26 +1,44 @@
-  import arcpy
+import arcpy
 
 arcpy.env.overwriteOutput = True
 arcpy.env.addOutputsToMap = False 
 mxd = arcpy.mapping.MapDocument("CURRENT")
 df = arcpy.mapping.ListDataFrames(mxd, '*')[0]
-LayerNeedsFieldsTurnedOff = arcpy.mapping.ListLayers(mxd, '*Stormwater Service Line Pipe', df)[0]
-undesiredFields = ['AssetID', 'SHAPE', 'Sub_Area', 'Search_Description', 'Short_Description', 'Owner', 'Maint_Responsibility', 'GIS_Link', 'Risk_Rating', 'Criticality_Rating', 'Maintenance_Start_Date','Maintenance_End_Date', 'Useful_Service_Life','Base_Servcice_Life', 'aquisition_method', 'Remaining_Life', 'Year_Planned_Replace', 'ASSNBRI', 'ASSET_RID','ASSID','GIS_ID','GIS_LAYER','Catchment', 'Sub_Catchment', 'Base_Service_Life','ASSET_UF.AMIS_ID'] 
-field_info = arcpy.Describe(LayerNeedsFieldsTurnedOff).fieldInfo
-for i in range(field_info.count):
-    for uf in undesiredFields:
-        if field_info.getfieldname(i).endswith(uf):
-            field_info.setvisible(i, 'HIDDEN')
-arcpy.MakeFeatureLayer_management(LayerNeedsFieldsTurnedOff, 'temp_layer', '', '', field_info)
-refLyr = arcpy.mapping.Layer('temp_layer')
-refLyr.name = 'Stormwater Service Line Pipe' 
-arcpy.ApplySymbologyFromLayer_management(refLyr, LayerNeedsFieldsTurnedOff)
-arcpy.mapping.UpdateLayer(df, LayerNeedsFieldsTurnedOff, refLyr, False)
-mxd.save()  
-print 'cleaning up-' 
-if arcpy.Exists('temp_layer'):     
-    print '\'temp_layer\' still in memory...deleting now...'     
-    arcpy.Delete_management('temp_layer')
-print 'deleting obj refs...' 
-del mxd, LayerNeedsFieldsTurnedOff, refLyr
-print 'done.'  
+
+undesiredFields = ['AssetID', 'SHAPE', 'Sub_Area', 'Search_Description', 'Short_Description',
+                   'Owner', 'Maint_Responsibility', 'GIS_Link', 'Risk_Rating', 'Criticality_Rating',
+                   'Maintenance_Start_Date','Maintenance_End_Date', 'Useful_Service_Life',
+                   'Base_Servcice_Life', 'aquisition_method', 'Remaining_Life', 'Year_Planned_Replace',
+                   'ASSNBRI', 'ASSET_RID','ASSID','GIS_ID','GIS_LAYER','Catchment', 'Sub_Catchment',
+                   'Base_Service_Life','AMIS_ID','Peak_Structural_Condition',
+                   'Mean_Structural_Condition','Peak_Service_Condition','Mean_Service_Condition']
+
+layers = arcpy.mapping.ListLayers(mxd,'*',df)
+
+for layer in layers:
+    layer_name = str(layer.longName)
+    if not layer.isGroupLayer:
+        
+    
+        # Clear current layer selection to avoid subset selections
+        # arcpy.SelectLayerByAttribute_management(layer_name, 'CLEAR_SELECTION')
+
+        field_info = arcpy.Describe(layer).fieldInfo
+        for i in range(field_info.count):
+            for uf in undesiredFields:
+                if field_info.getfieldname(i).endswith(uf):
+                    field_info.setvisible(i, 'HIDDEN')
+        arcpy.MakeFeatureLayer_management(layer, 'temp_layer', '', '', field_info)
+        refLyr = arcpy.mapping.Layer('temp_layer')
+        refLyr.name = layer.name 
+        arcpy.ApplySymbologyFromLayer_management(refLyr, layer)
+        arcpy.mapping.UpdateLayer(df, layer, refLyr, False)
+        mxd.save()  
+        print 'cleaning up-' 
+        if arcpy.Exists('temp_layer'):     
+            print '\'temp_layer\' still in memory...deleting now...'     
+            arcpy.Delete_management('temp_layer')
+        print 'deleting obj refs...' 
+        del refLyr
+        print 'done.'  
+del mxd
