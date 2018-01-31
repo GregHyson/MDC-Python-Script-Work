@@ -16,13 +16,8 @@ undesiredFields = ['AssetID', 'SHAPE', 'Sub_Area', 'Search_Description', 'Short_
 layers = arcpy.mapping.ListLayers(mxd,'*',df)
 
 for layer in layers:
-    layer_name = str(layer.longName)
     if not layer.isGroupLayer:
-        
     
-        # Clear current layer selection to avoid subset selections
-        # arcpy.SelectLayerByAttribute_management(layer_name, 'CLEAR_SELECTION')
-
         field_info = arcpy.Describe(layer).fieldInfo
         for i in range(field_info.count):
             for uf in undesiredFields:
@@ -33,7 +28,6 @@ for layer in layers:
         refLyr.name = layer.name 
         arcpy.ApplySymbologyFromLayer_management(refLyr, layer)
         arcpy.mapping.UpdateLayer(df, layer, refLyr, False)
-        mxd.save()  
         print 'cleaning up-' 
         if arcpy.Exists('temp_layer'):     
             print '\'temp_layer\' still in memory...deleting now...'     
