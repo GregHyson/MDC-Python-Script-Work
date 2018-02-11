@@ -1,3 +1,10 @@
+# This is my attempt at completing this using the base arcpy module. It needs to be noted that the functionality
+# I was looking for does not currently exist within the base arcpy module and the 
+# final implementation of this method is done using the comtype module.
+# The reason behind this is that there are two versions of filed aliases stored seperate from each other,
+# one in the mxd and one in the GDB. The arcpy module only gives functionality to change the version stored within the GDB
+# which is considerably more permanent.
+
 import arcpy
 
 # Debugger txt file path for Grant or Gregs work PC
