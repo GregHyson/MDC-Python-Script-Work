@@ -88,7 +88,7 @@ while pLayer:
         print "New Field Order : " + pTableProperty.FieldOrder                
         
 #--------------------------------------------------------------------------------
-# This seciton of the code is broken and requires more work.
+# This seciton of the code is an attempt at debug and requires more work.
 # I have a sneaking suspiscion there has been a change to the implementation of TableWindow
 # or Table Control that I have not been able to find record of.
         pTableWindow.Show = True
