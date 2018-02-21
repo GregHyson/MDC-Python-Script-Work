@@ -27,11 +27,11 @@ def fix_packages_alias_visibility(mxd_path,output_mxd_path=None):
 
 
     # Fields to be made not to be visible
-    unwanted_visible = ['AssetID','Site','Pressure_Zone','Service_Area',
-                        'Supply_Area','AMIS_ID','Search_Description',
+    unwanted_visible = ['Asset ID','Site','Pressure_Zone','Service_Area',
+                        'Supply_Area','Search_Description',
                         'Short_Description','ASSET_RID','Condition',
                         'Owner','Maint_Responsibility','GIS_LINK','Street',
-                        'Locality','Intelligent_ID','Criticality_Rating',
+                        'Locality','Criticality_Rating',
                         'Maintenance_Start_Date','Maintenance_End_Date',
                         'Useful_Service_Life','Base_Service_Life','aquisition_method',
                         'Year_Planned_Replace','Remaining_Life','ASSNBRI',
