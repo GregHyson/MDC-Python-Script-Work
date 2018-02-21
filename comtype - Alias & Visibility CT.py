@@ -27,20 +27,20 @@ def fix_packages_alias_visibility(mxd_path,output_mxd_path=None):
 
 
     # Fields to be made not to be visible
-    unwanted_visible = ['AssetID','Site','Pressure_Zone','Service_Area',
-                        'Supply_Area','AMIS_ID','Search_Description',
+    unwanted_visible = ['Asset ID','Site','Pressure_Zone','Service_Area',
+                        'Supply_Area','Search_Description',
                         'Short_Description','ASSET_RID','Condition',
-                        'Owner','Maint_Responsibility','GIS_LINK','Street',
-                        'Locality','Criticality_Rating',
+                        'Owner','Maint_Responsibility','Criticality_Rating',
                         'Maintenance_Start_Date','Maintenance_End_Date',
                         'Useful_Service_Life','Base_Service_Life','aquisition_method',
                         'Year_Planned_Replace','Remaining_Life','ASSNBRI',
                         'Peak_Structural_Condition','Mean_Structural_Condition',
                         'Peak_Service_Condition','Mean_Service_Condition',
                         'ASSET_RID','ASSID','GIS_ID','GIS_LAYER', 'SHAPE',
-                        'SHAPE.len', 'Catchment', 'Sub-Catchment', 'Risk_Rating'
+                        'Catchment', 'Sub-Catchment', 'Risk_Rating'
                         'Install_Date_Reliability','Plan_Reliability',
-                        'Material_Reliability', 'Diameter_Reliability']
+                        'Material_Reliability', 'Diameter_Reliability',
+                        'Risk_Rating', 'GIS_Link']
     
     # Fields that defaultly have the finprod added to the front
     change_me = ['AMIS_Edited_Date', 'AMIS_Edited_User']
